@@ -1,0 +1,44 @@
+<table id="dataTable" class="table">
+                <thead class=" text-primary">
+                    <th width="10%">Store Code</th>
+                    <th width="40%">Store Name</th>
+                    <th width="10%">Dorm</th>
+                    <th width="10%">Area</th>
+                    <th width="10%">Date</th>
+                    <th width="2%">Status</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>544</td>
+                    <td>FOX57 - PULONG BULO (PLARIDEL)</td>
+                    <td>PAMPANGA</td>
+                    <td>1</td>
+                    <td><?php echo date('Y-m-d')?></td>
+                    <td><h5><span class="badge badge badge-dark">------</span></h5></td>
+                  </tr>
+                  <tr>
+                    <td>544</td>
+                    <td>FOX57 - PULONG BULO (PLARIDEL)</td>
+                    <td>PAMPANGA</td>
+                    <td>1</td>
+                    <td><?php echo date('Y-m-d')?></td>
+                    <td><h5><span class="badge badge badge-secondary">Loading</span></h5></td>
+                  </tr>
+                  <tr>
+                    <td>544</td>
+                    <td>FOX57 - PULONG BULO (PLARIDEL)</td>
+                    <td>PAMPANGA</td>
+                    <td>1</td>
+                    <td><?php echo date('Y-m-d')?></td>
+                    <td><h5><span class="badge badge badge-success">------</span></h5></td>
+                  </tr>
+                  <tr>
+                    <td>544</td>
+                    <td>FOX57 - PULONG BULO (PLARIDEL)</td>
+                    <td>PAMPANGA</td>
+                    <td>1</td>
+                    <td><?php echo date('Y-m-d')?></td>
+                    <td><h5><span class="badge badge badge-secondary">Dpd</span></h5></td>
+                  </tr>
+                </tbody>
+            </table>

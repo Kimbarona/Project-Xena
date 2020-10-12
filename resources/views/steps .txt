@@ -1,0 +1,229 @@
+install laravel
+create database and edit the .env
+then go to views create layout folder and admin
+go to public create folder name assets the content is your bootstrap template
+go to app -> providers->AppServiceProvider.php
+        add this: use Illuminate\Support\Facades\Schema;
+        public function boot()
+            {
+                Schema::defaultStringLength(191);
+            }
+go to dabase->migrations just edit the create table:
+     public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('phone');
+            $table->string('usertype')->nullable();
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+go to register.blade.php add another txtbox for "Phone"
+go to app->user.php
+     protected $fillable = [
+        'name', 'phone', 'email', 'password',
+    ];
+
+then go to app->http->controller->auth->RegisterController.php
+    add the ff. under validator controller:
+        'phone' => ['required', 'string', 'phone', 'max:12', 'min:12'],
+
+    then under create function add new line for "phone"
+
+user level (admin and user)
+
+    create middleware first:
+        php artisan make:middleware name ng middleware
+        to view go to app->Http->Middleware->AdminMiddleware
+        then just type condition like this:
+
+            public function handle($request, Closure $next)
+                {
+                    if(Auth::user()->usertype == 'admin'){
+
+                        return $next($request);
+
+                    }
+                    else{
+                        return redirect('/home')->with('status','Your Are Not Allowed To Admin Dashboard!');
+                    }
+
+                }
+
+next step, register to kernel.php
+    app->Http->kernel.php
+
+    @ $routemiddleware add new line of code:
+    'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
+next go to logincontroller
+    comment this: // protected $redirectTo = RouteServiceProvider::HOME;
+    replace with:
+        protected function redirectTo(){
+
+        if(Auth::user()->usertype == 'admin'){
+
+
+        }
+        else{
+
+        }
+    }
+then use global "use Illuminate\Support\Facades\Auth;"
+next go to AdminMiddleware.php add:
+        "use Illuminate\Support\Facades\Auth;"
+
+next sted go to web.php then add this code:
+        Route::group(['middleware' => ['auth','admin']], function(){
+
+            Route::get('/admin', function () {
+                return view('admin.dashboard');
+            });
+
+        });
+
+
+
+next step go to app.blade.php then copy the @else content then
+go to master.blade.php paste it and replace the existing.
+
+
+nest step create under admin folder create register.blade.php then copy the
+dashboard.blade.php then edit the table. this is for fetching user data and registration
+
+next step go to web.php then add this code under route group:
+    Route::get('/role-register', 'Admin\DashboardController@registered');
+
+then create folder inside controller name it "Admin"
+ then run command:  php artisan make:controller Admin/DashboardController
+
+next step type this code inside DashBoardController:
+    public function registered()
+    {
+        return view('admin.register');
+    }
+
+then go to master.blade.php chang the link of the tab User Profile to "/role-register"
+
+next fetch the user table inside the registered function type:
+  public function registered()
+    {
+        $users = User::all(); //this one
+        return view('admin.register')->with('users',$users);
+    }
+   then import "use App\User;"
+
+   then go to register.blade.php create foreach:
+    like this:
+                     @foreach ($users as $rowusers )
+                        <tr>
+                            <td>{{ $rowusers->name }}</td>
+                            <td>{{ $rowusers->phone }}</td>
+                            <td>{{ $rowusers->email }}</td>
+                            <td>
+                                <a href="#" class="btn btn-success">Edit</a>|
+                                <a href="#" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    @endforeach
+
+next step edit data:
+    on the edit button link just simply put this code:
+        /role-edit/{{ $rowusers->id }}
+    then go to web.php and create route:
+         Route::get('/role-edit/{id}', 'Admin\DashboardController@registeredit');
+    then go to controller create fuction:
+         public function registeredit(Request $request, $id)
+            {
+                $users = User::findOrfail($id);
+                return view('admin.register-edit')->with('users',$users);
+            }
+    then create register-edit.blade.php under admin folder
+    then code this: see reference at register.blade.php
+
+    then again, create route:
+         Route::put('/role-register-update/{id}', 'Admin\DashboardController@registerupdate');
+         aftter this create function under DashBoardController:
+             public function registerupdate(Request $request, $id)
+                {
+                    $users = User::find($id);
+                    $users->name = $request->input('name');
+                    $users->usertype = $request->input('usertype');
+                    $users->update();
+                    return redirect('/role-register')->with('status','Successfully Updated!');
+                }
+        then add this code to your register.blade.php:
+                @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
+next step delete:
+         <td>
+            <form action="/role-delete/{{ $rowusers->id }}" method="POST">
+                {{ csrf_field() }}
+                {{method_field('DELETE')}}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+    go to web.php type:
+         Route::delete('/role-delete/{id}', 'Admin\DashboardController@registerdelete');
+    then create function under DashBoardController:
+              public function registerdelete($id)
+                {
+                    $users = User::findOrfail($id);
+                    $users->delete();
+                    return redirect('/role-register')->with('status','Successfully Deleted!');
+                }
+
+next create crud: example customer details:
+    first: create migration type:
+        php artisan make:migration create_customer_table
+        then edit then :
+            php artisan migrate
+then create new folder inside app named it:
+    "Models" then run this code:
+
+        php artisan make:model Models/customer -m
+
+        then go to the file just simply type inside class:
+
+             protected $table = 'customer';
+             protected $fillable = ['name','address','phone'];
+
+then go to views under admin folder create a blade named it customer.blade.php then
+copy the dashboard file because the sample table is there.
+
+then create controller use this command:
+    $ php artisan make:controller Admin/CustomerController
+    then go to file create function:
+        public function index()
+            {
+                return view('admin.customer');
+            }
+
+
+LARAVEL API:
+
+1. create a model ex. Customer.
+2. create controller then inside controller type:
+     public function List()
+        {
+            return Customer::all();
+        }
+3. install the passport:
+    composer require laravel/passport
+    then: php artisan passport:install
+4. Go to your config/app.php add:
+    Laravel\Passport\PassportServiceProvider::class,
+    under the providers.
+
+
+
+

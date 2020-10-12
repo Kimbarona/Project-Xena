@@ -1,0 +1,68 @@
+<table id="DashboardView" class="table">
+    <thead class=" text-primary">
+        <th width="5%">Store Code</th>
+        <th width="10%">Store Name</th>
+        <th width="5%">Dorm</th>
+        <th width="5%">Area</th>
+        @foreach ( $DateHeader as $HeaderDate)
+            <th width="2%" style='border:1px solid #fff'><font color='' size='2px'>{{$HeaderDate->date}}</font></th>
+        @endforeach
+
+    </thead>
+    <tbody>
+        @foreach ( $upddata as $data)
+            <tr>
+                <td>{{$data->storecode}}</td>
+                <td>{{$data->StoreName}}</td>
+                <td>{{$data->Dorm}}</td>
+                <td>{{$data->Area}}</td>
+
+                            @foreach ( $DateHeader as $HeaderDate =>$row)
+
+                                <td style='border:1px solid #fff' bgcolor="green"><font size='1.5px' color='white'>{{$row->date}}</font></td>
+                            {{-- @for($i=0; $i < 10; $i++)
+                                <td style='border:1px solid #fff' bgcolor="green"><font size='1.5px' color='white'>{{$row->date}}</font></td>
+                            @endfor --}}
+                            @endforeach
+            </tr>
+        @endforeach
+
+    </tbody>
+</table>
+
+
+
+$entries = [];
+$entry = [];
+
+        $dx = count($DateHeader);
+        foreach ($upddata as $k =>$value)
+            {
+
+                for ($i=0; $i < $dx; $i++) {
+
+                    $ress_date = $DateHeader[$i];
+                    $entryCode = $upddata[$k]->storecode;
+
+                        // $Rowdate = DB::table('imports')->select('date')->where('created_at', Import::max('created_at'))
+                        // ->where(function ($query) use ($entryCode, $ress_date){
+                        // $query->where('storecode','=',$entryCode);
+                        // $query->orwhere('date','=',$ress_date);
+                        // })->get();
+
+                        // if (empty($Rowdate)) {
+                        //     $entry[$ress_date]->storecode = $entryCode;
+                        //     $entry[$ress_date]->status = 'missing';
+                        // } else {
+                        //     $entry[$ress_date]->storecode = $entryCode;
+                        //     $entry[$ress_date]->status = 'available';
+                        // }
+                }
+
+                // $entries[] = $entry;
+
+                dd($Ds);
+            }
+
+
+
